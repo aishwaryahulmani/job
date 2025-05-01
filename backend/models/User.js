@@ -29,7 +29,15 @@ const userSchema = new mongoose.Schema({
   summary: {
     type: String,
     // required: [true, "Please add a password"]
-  }
+  },
+  skills: {
+    type: String
+  },
+  resume: {
+    data: Buffer,
+    contentType: String,
+    filename: String,
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);

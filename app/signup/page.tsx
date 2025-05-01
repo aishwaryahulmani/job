@@ -41,7 +41,7 @@ export default function SignupPage() {
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/signup", {
+      const res = await axios.post("http://localhost:5001/api/auth/signup", {
         firstName: form.firstName,
         lastName: form.lastName,
         email: form.email,

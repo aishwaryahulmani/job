@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Job = require('../models/jobs');
+
 
 // @desc    Register a new user
 // @route   POST /api/auth/signup
@@ -95,6 +97,9 @@ exports.getUserProfile = async (req, res) => {
 // @desc    Update user profile
 // @route   PUT /api/auth/updateUserProfile
 exports.updateUserProfile = async (req, res) => {
+
+  console.log("route is hit update");
+  
     const { firstName, lastName, email, phone, location, summary } = req.body;
   
     try {
@@ -111,7 +116,7 @@ exports.updateUserProfile = async (req, res) => {
       user.email = email || user.email;
       user.phone = phone || user.phone;
       user.location = location || user.location;
-      user.bio = summary || user.summary;
+      user.summary = summary || user.summary;
   
       // Save the updated user
       await user.save();
@@ -135,3 +140,60 @@ exports.updateUserProfile = async (req, res) => {
   };
   
 
+exports.fetchJobs = async (req, res) => {
+  try {
+    const jobs = await Job.find().sort({ createdAt: -1 }).limit(20);
+    res.json(jobs);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch jobs' });
+  }
+};
+
+// @desc    Upload resume
+// @route   PUT /api/auth/uploadResume
+exports.uploadResume = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No resume file uploaded" });
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Store file as binary in MongoDB
+    user.resume = {
+      data: req.file.buffer,
+      contentType: req.file.mimetype,
+      filename: req.file.originalname,
+    };
+
+    await user.save();
+
+    res.status(200).json({
+      message: "Resume uploaded successfully",
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        resumeUploaded: true,
+      },
+    });
+  } catch (error) {
+    console.error("Error uploading resume:", error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// exports.qrcode = async (req, res) => {
+//   const userId = req.params.id;
+//   const profileURL = `https://profile-hosting-kappa.vercel.app/?id=${userId}`;
+
+//   try {
+//     const qrImage = await QRCode.toDataURL(profileURL);
+//     res.json({ qrCode: qrImage, url: profileURL });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: 'Error generating QR code' });
+//   }
+// }

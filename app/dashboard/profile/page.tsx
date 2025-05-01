@@ -17,10 +17,10 @@ export default function ProfilePage() {
     email: "",
     phone: "",
     location: "",
-    bio: "",
-    resume: "",
-    skills: "",
-    jobPreferences: "",
+    summary: "",
+    // resume: "",
+    // skills: "",
+    // jobPreferences: "",
   });
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function ProfilePage() {
       const decoded = jwtDecode(token);
       const userId = decoded.id;
       axios
-        .get("http://localhost:5000/api/auth/getUserProfile", {
+        .get("http://localhost:5001/api/auth/getUserProfile", {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {
@@ -55,7 +55,7 @@ export default function ProfilePage() {
     if (token) {
       axios
         .put(
-          "http://localhost:5000/api/auth/updateUserProfile",
+          "http://localhost:5001/api/auth/updateUserProfile",
           formData,
           { headers: { Authorization: `Bearer ${token}` } }
         )
@@ -69,6 +69,36 @@ export default function ProfilePage() {
         });
     }
   };
+
+  const uploadResume = () => {
+    const token = localStorage.getItem("authToken");
+    const resumeFile = formData.resume;
+  
+    if (!resumeFile) {
+      alert("Please select a resume file first.");
+      return;
+    }
+  
+    const formDataToSend = new FormData();
+    formDataToSend.append("resume", resumeFile);
+  
+    axios
+      .put("http://localhost:5001/api/auth/uploadResume", formDataToSend, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) => {
+        alert("Resume uploaded successfully!");
+        setUser(res.data.user);
+      })
+      .catch((err) => {
+        console.error("Resume upload failed:", err);
+        alert("Failed to upload resume.");
+      });
+  };
+  
 
   if (!user) {
     return <div>Loading...</div>; // Show loading while decoding or fetching user data
@@ -87,7 +117,7 @@ export default function ProfilePage() {
           <TabsTrigger value="personal">Personal Info</TabsTrigger>
           <TabsTrigger value="resume">Resume</TabsTrigger>
           <TabsTrigger value="skills">Skills & Tech Stack</TabsTrigger>
-          <TabsTrigger value="preferences">Job Preferences</TabsTrigger>
+          {/* <TabsTrigger value="preferences">Job Preferences</TabsTrigger> */}
         </TabsList>
 
         {/* Personal Information Tab */}
@@ -148,12 +178,12 @@ export default function ProfilePage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="bio">Professional Summary</Label>
+                <Label htmlFor="summary">Professional Summary</Label>
                 <Textarea
-                  id="bio"
-                  name="bio"
+                  id="summary"
+                  name="summary"
                   rows={4}
-                  value={formData.bio}
+                  value={formData.summary}
                   onChange={handleInputChange}
                 />
               </div>
@@ -163,24 +193,31 @@ export default function ProfilePage() {
 
         {/* Resume Tab */}
         <TabsContent value="resume" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Resume</CardTitle>
-              <CardDescription>Upload your resume</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="resume">Resume (PDF or Word)</Label>
-                <Input
-                  id="resume"
-                  name="resume"
-                  type="file"
-                  onChange={(e) => setFormData({ ...formData, resume: e.target.files?.[0] })}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+  <Card>
+    <CardHeader>
+      <CardTitle>Resume</CardTitle>
+      <CardDescription>Upload your resume</CardDescription>
+    </CardHeader>
+    <CardContent className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="resume">Resume (PDF or Word)</Label>
+        <Input
+          id="resume"
+          name="resume"
+          type="file"
+          accept=".pdf,.doc,.docx"
+          onChange={(e) =>
+            setFormData({ ...formData, resume: e.target.files?.[0] })
+          }
+        />
+        <Button className="mt-2" onClick={uploadResume}>
+          Upload Resume
+        </Button>
+      </div>
+    </CardContent>
+  </Card>
+</TabsContent>
+
 
         {/* Skills & Tech Stack Tab */}
         <TabsContent value="skills" className="space-y-4">
@@ -205,7 +242,7 @@ export default function ProfilePage() {
         </TabsContent>
 
         {/* Job Preferences Tab */}
-        <TabsContent value="preferences" className="space-y-4">
+        {/* <TabsContent value="preferences" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Job Preferences</CardTitle>
@@ -224,7 +261,7 @@ export default function ProfilePage() {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
     </div>
   );
