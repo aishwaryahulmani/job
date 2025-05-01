@@ -197,3 +197,30 @@ exports.uploadResume = async (req, res) => {
 //     res.status(500).json({ message: 'Error generating QR code' });
 //   }
 // }
+
+
+exports.getPublicUserProfile = async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const user = await User.findById(userId).select(
+      'firstName lastName email phone location summary'
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      email: user.email || '',
+      phone: user.phone || '',
+      location: user.location || '',
+      summary: user.summary || ''
+    });
+  } catch (error) {
+    console.error('Error fetching public profile:', error.message);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
