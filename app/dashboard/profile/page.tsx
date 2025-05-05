@@ -286,7 +286,7 @@ export default function ProfilePage() {
     phone: "",
     location: "",
     summary: "",
-    resume: "",
+    // resume: "",
     skills: "",
   });
 
@@ -512,7 +512,7 @@ export default function ProfilePage() {
               <Button
                 onClick={() =>
                   navigator.clipboard.writeText(
-                    `https://profile-hosting-kappa.vercel.app/?id=${user._id}`
+                    `https://profile-hosting-dl9r1rxts-aishwaryahulmanis-projects.vercel.app/?id=${user._id}`
                   )
                 }
               >

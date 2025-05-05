@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.get('/qrcode/:id', async (req, res) => {
   const userId = req.params.id;
-  const profileURL = `https://profile-hosting-kappa.vercel.app/?id=${userId}`;
+  const profileURL = `https://profile-hosting-green.vercel.app//?id=${userId}`;
   console.log(profileURL);
   
 
