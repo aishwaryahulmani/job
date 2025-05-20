@@ -142,7 +142,7 @@ exports.updateUserProfile = async (req, res) => {
 
 exports.fetchJobs = async (req, res) => {
   try {
-    const jobs = await Job.find().sort({ createdAt: -1 }).limit(20);
+    const jobs = await Job.find().sort({ createdAt: -1 });
     res.json(jobs);
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch jobs' });

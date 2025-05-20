@@ -18,7 +18,7 @@ const items = [
   },
   {
     title: "Job Search",
-    href: "/search",
+    href: "/dashboard/search",
     icon: Search,
   },
   {

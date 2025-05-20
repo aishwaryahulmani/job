@@ -45,7 +45,9 @@ async function scrapeNaukriJobs(url = "https://www.naukri.com/it-jobs?src=discov
         const company = card.querySelector('a.comp-name')?.innerText || 'N/A';
         const link = card.querySelector('a.title')?.href || 'N/A';
         const posted = card.querySelector('span.job-post-day')?.innerText || 'N/A';
-        return { title, company, link, posted };
+        const location = card.querySelector('span.locWdth')?.innerText || 'N/A';
+        const exp = card.querySelector('span.expwdth')?.innerText || 'N/A';
+        return { title, company, link, posted ,location,exp};
       });
     });
 
@@ -56,6 +58,8 @@ async function scrapeNaukriJobs(url = "https://www.naukri.com/it-jobs?src=discov
     
     // Insert into MongoDB
     await Job.insertMany(jobs);
+    console.log(jobs);
+    
     console.log("✅ Jobs inserted into MongoDB");
 
     await browser.close();

@@ -286,7 +286,7 @@ export default function ProfilePage() {
     phone: "",
     location: "",
     summary: "",
-    // resume: "",
+    resume: null,
     skills: "",
   });
 

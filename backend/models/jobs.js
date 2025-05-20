@@ -5,6 +5,8 @@ const jobSchema = new mongoose.Schema({
   company: String,
   link: String,
   posted: String,
+  location:String,
+  exp:String
 }, { timestamps: true });
 
 module.exports = mongoose.model('Job', jobSchema);
